@@ -1,7 +1,7 @@
 -- ============================================
 -- Check Active Connections on Secondary
--- Run this on: secondaryserver.database.windows.net
--- Database: primdb
+-- Run this on: yoursecondaryserver.database.windows.net
+-- Database: YourDatabase
 -- ============================================
 
 -- Check 1: Show all active sessions
@@ -20,7 +20,7 @@ SELECT
     last_request_start_time,
     last_request_end_time
 FROM sys.dm_exec_sessions
-WHERE database_id = DB_ID('primdb')
+WHERE database_id = DB_ID('YourDatabase')
     AND is_user_process = 1
 ORDER BY login_time DESC;
 GO
@@ -38,13 +38,13 @@ SELECT
     login_time,
     DATEDIFF(MINUTE, login_time, GETDATE()) AS minutes_connected
 FROM sys.dm_exec_sessions
-WHERE database_id = DB_ID('primdb')
+WHERE database_id = DB_ID('YourDatabase')
     AND is_user_process = 1
     AND (
         program_name LIKE '%Debezium%' OR
         program_name LIKE '%Java%' OR
         program_name LIKE '%JDBC%' OR
-        login_name = 'sqladmin'
+        login_name = 'your_username'
     )
 ORDER BY login_time DESC;
 GO
@@ -65,7 +65,7 @@ SELECT
 FROM sys.dm_exec_sessions s
 LEFT JOIN sys.dm_exec_requests r ON s.session_id = r.session_id
 CROSS APPLY sys.dm_exec_sql_text(r.sql_handle) t
-WHERE s.database_id = DB_ID('primdb')
+WHERE s.database_id = DB_ID('YourDatabase')
     AND s.is_user_process = 1
 ORDER BY r.start_time DESC;
 GO
@@ -77,11 +77,11 @@ SELECT
     SUM(cpu_time) AS total_cpu_time,
     SUM(reads) AS total_reads
 FROM sys.dm_exec_sessions
-WHERE database_id = DB_ID('primdb')
+WHERE database_id = DB_ID('YourDatabase')
     AND is_user_process = 1
 GROUP BY program_name
 ORDER BY connection_count DESC;
 GO
 
-PRINT 'If you see connections from Java/JDBC/sqladmin, Debezium is connected to the secondary!';
+PRINT 'If you see connections from Java/JDBC/your_username, Debezium is connected to the secondary!';
 GO

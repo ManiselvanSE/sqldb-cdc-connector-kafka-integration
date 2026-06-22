@@ -1,11 +1,11 @@
 -- ============================================
 -- Complete CDC Setup - Safe Version
--- Run this on: primaryserver.database.windows.net
--- Database: primdb
+-- Run this on: yourprimaryserver.database.windows.net
+-- Database: YourDatabase
 -- ============================================
 
 -- Enable CDC on database (safe - won't fail if already enabled)
-IF NOT EXISTS (SELECT 1 FROM sys.databases WHERE name = 'primdb' AND is_cdc_enabled = 1)
+IF NOT EXISTS (SELECT 1 FROM sys.databases WHERE name = 'YourDatabase' AND is_cdc_enabled = 1)
 BEGIN
     EXEC sys.sp_cdc_enable_db;
     PRINT 'Step 1: CDC enabled on database';

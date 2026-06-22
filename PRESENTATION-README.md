@@ -206,7 +206,7 @@ sed -i 's/YourTableName/customers/g' *.md
 ### Update URLs and IPs
 ```bash
 # Update with your actual IPs
-sed -i 's/XX.XX.XX.XX/20.235.34.175/g' *.md
+sed -i 's/XX.XX.XX.XX/<GRAFANA_IP>/g' *.md
 ```
 
 ### Add Your Branding

@@ -12,12 +12,12 @@ spec:
     # Topic prefix for all Kafka topics
     topic.prefix: "azure-sqlserver"
 
-    # Azure SQL Server Read Replica Connection Details
-    database.hostname: "secondaryserver.database.windows.net"
+    # Azure SQL Server Connection Details
+    database.hostname: "yourserver.database.windows.net"
     database.port: "1433"
-    database.user: "sqladmin"
-    database.password: "Confluent1234"
-    database.names: "primdb"
+    database.user: "your_username"
+    database.password: "your_password"
+    database.names: "your_database"
 
     # Read Replica Configuration (CRITICAL)
     # This forces the connection to the read-only replica

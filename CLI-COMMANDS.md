@@ -34,7 +34,7 @@ kubectl exec kafka-0 -n confluent -- \
 kubectl exec kafka-0 -n confluent -- \
   kafka-topics --describe \
   --bootstrap-server localhost:9071 \
-  --topic azure-sqlserver.primdb.dbo.Customers
+  --topic sqlserver.dbo.Customers
 
 # Check topic lag
 kubectl exec kafka-0 -n confluent -- \
@@ -49,7 +49,7 @@ kubectl exec kafka-0 -n confluent -- \
 kubectl exec kafka-0 -n confluent -- \
   kafka-console-consumer \
     --bootstrap-server localhost:9071 \
-    --topic azure-sqlserver.primdb.dbo.Customers \
+    --topic sqlserver.dbo.Customers \
     --from-beginning \
     --max-messages 10
 
@@ -57,7 +57,7 @@ kubectl exec kafka-0 -n confluent -- \
 kubectl exec kafka-0 -n confluent -- \
   kafka-console-consumer \
     --bootstrap-server localhost:9071 \
-    --topic azure-sqlserver.primdb.dbo.Customers \
+    --topic sqlserver.dbo.Customers \
     --from-beginning \
     --max-messages 1 | \
   python3 -m json.tool
@@ -66,7 +66,7 @@ kubectl exec kafka-0 -n confluent -- \
 kubectl exec -it kafka-0 -n confluent -- \
   kafka-console-consumer \
     --bootstrap-server localhost:9071 \
-    --topic azure-sqlserver.primdb.dbo.Customers
+    --topic sqlserver.dbo.Customers
 ```
 
 ## Monitor Connect Cluster
@@ -129,7 +129,7 @@ alias k-connector='kubectl get connector -n confluent'
 alias k-connect-logs='kubectl logs -n confluent connect-0 -f'
 
 # CDC topic consumer
-alias k-cdc-customers='kubectl exec kafka-0 -n confluent -- kafka-console-consumer --bootstrap-server localhost:9071 --topic azure-sqlserver.primdb.dbo.Customers --from-beginning --max-messages 10'
+alias k-cdc-customers='kubectl exec kafka-0 -n confluent -- kafka-console-consumer --bootstrap-server localhost:9071 --topic sqlserver.dbo.Customers --from-beginning --max-messages 10'
 ```
 
 Then use:
@@ -160,7 +160,7 @@ echo "CDC Topics:"
 kubectl exec kafka-0 -n confluent -- kafka-topics --list --bootstrap-server localhost:9071 2>/dev/null | grep azure-sqlserver
 echo ""
 echo "Latest Message:"
-kubectl exec kafka-0 -n confluent -- kafka-console-consumer --bootstrap-server localhost:9071 --topic azure-sqlserver.primdb.dbo.Customers --from-beginning --max-messages 1 2>/dev/null | python3 -m json.tool
+kubectl exec kafka-0 -n confluent -- kafka-console-consumer --bootstrap-server localhost:9071 --topic sqlserver.dbo.Customers --from-beginning --max-messages 1 2>/dev/null | python3 -m json.tool
 ```
 
 Run: `chmod +x monitor.sh && ./monitor.sh`

@@ -63,7 +63,7 @@ These scripts are for SQL Server CDC setup, verification, and testing.
 **Usage:**
 ```sql
 -- Update database name and run on primary server
-sqlcmd -S primaryserver.database.windows.net -U sqladmin -P password -d YourDatabase -i complete-cdc-setup.sql
+sqlcmd -S yourprimaryserver.database.windows.net -U sqladmin -P password -d YourDatabase -i complete-cdc-setup.sql
 ```
 
 ---
@@ -88,7 +88,7 @@ sqlcmd -S primaryserver.database.windows.net -U sqladmin -P password -d YourData
 **Usage:**
 ```sql
 -- Run on both primary and secondary to compare activity
-sqlcmd -S secondaryserver.database.windows.net -U sqladmin -P password -d YourDatabase -i check-cdc-activity.sql
+sqlcmd -S yoursecondaryserver.database.windows.net -U sqladmin -P password -d YourDatabase -i check-cdc-activity.sql
 ```
 
 **Expected output:**
@@ -116,7 +116,7 @@ sqlcmd -S secondaryserver.database.windows.net -U sqladmin -P password -d YourDa
 
 **Usage:**
 ```sql
-sqlcmd -S secondaryserver.database.windows.net -U sqladmin -P password -d YourDatabase -i check-secondary-connections.sql
+sqlcmd -S yoursecondaryserver.database.windows.net -U sqladmin -P password -d YourDatabase -i check-secondary-connections.sql
 ```
 
 **Look for:**
@@ -145,7 +145,7 @@ sqlcmd -S secondaryserver.database.windows.net -U sqladmin -P password -d YourDa
 **Usage:**
 ```sql
 -- Run on PRIMARY server only
-sqlcmd -S primaryserver.database.windows.net -U sqladmin -P password -d YourDatabase -i test-e2e-flow.sql
+sqlcmd -S yourprimaryserver.database.windows.net -U sqladmin -P password -d YourDatabase -i test-e2e-flow.sql
 ```
 
 **After running:**
@@ -163,7 +163,7 @@ sqlcmd -S primaryserver.database.windows.net -U sqladmin -P password -d YourData
 ### Initial Setup
 ```bash
 # 1. Run CDC setup on primary SQL Server
-sqlcmd -S primaryserver.database.windows.net -i scripts/complete-cdc-setup.sql
+sqlcmd -S yourprimaryserver.database.windows.net -i scripts/complete-cdc-setup.sql
 
 # 2. Deploy Debezium connector
 ./scripts/quick-commands.sh deploy
@@ -175,14 +175,14 @@ sqlcmd -S primaryserver.database.windows.net -i scripts/complete-cdc-setup.sql
 ### Verification
 ```bash
 # 1. Check connections on secondary (should see Debezium)
-sqlcmd -S secondaryserver.database.windows.net -i scripts/check-secondary-connections.sql
+sqlcmd -S yoursecondaryserver.database.windows.net -i scripts/check-secondary-connections.sql
 
 # 2. Check CDC activity on both servers
-sqlcmd -S primaryserver.database.windows.net -i scripts/check-cdc-activity.sql
-sqlcmd -S secondaryserver.database.windows.net -i scripts/check-cdc-activity.sql
+sqlcmd -S yourprimaryserver.database.windows.net -i scripts/check-cdc-activity.sql
+sqlcmd -S yoursecondaryserver.database.windows.net -i scripts/check-cdc-activity.sql
 
 # 3. Run end-to-end test
-sqlcmd -S primaryserver.database.windows.net -i scripts/test-e2e-flow.sql
+sqlcmd -S yourprimaryserver.database.windows.net -i scripts/test-e2e-flow.sql
 
 # 4. Verify message in Kafka
 ./scripts/quick-commands.sh consume

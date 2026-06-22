@@ -12,8 +12,8 @@ Your monitoring stack is deployed and ready to use.
 
 | Service | URL | Credentials |
 |---------|-----|-------------|
-| **Grafana** | http://20.235.34.175:3000 | admin / admin |
-| **Prometheus** | http://20.235.28.252:9090 | No auth |
+| **Grafana** | http://<GRAFANA_IP>:3000 | admin / admin |
+| **Prometheus** | http://<PROMETHEUS_IP>:9090 | No auth |
 
 ⚠️ **IMPORTANT:** Change the Grafana admin password on first login!
 
@@ -40,7 +40,7 @@ Your monitoring stack is deployed and ready to use.
 ### 1. Access Grafana
 
 ```
-Open: http://20.235.34.175:3000
+Open: http://<GRAFANA_IP>:3000
 Login: admin / admin
 Change Password: Click profile → Change Password
 ```
@@ -122,7 +122,7 @@ kubectl patch connect connect -n confluent --type='json' -p='[
 | KafkaUnderReplicatedPartitions | Warning | Replication issues |
 | KafkaISRShrink | Warning | ISR shrinking |
 
-View alerts: http://20.235.28.252:9090/alerts
+View alerts: http://<PROMETHEUS_IP>:9090/alerts
 
 ---
 
@@ -132,20 +132,20 @@ View alerts: http://20.235.28.252:9090/alerts
 
 ```bash
 # Via browser
-http://20.235.28.252:9090/targets
+http://<PROMETHEUS_IP>:9090/targets
 
 # Via CLI
-curl -s http://20.235.28.252:9090/api/v1/targets | jq '.data.activeTargets[] | {job: .labels.job, health: .health}'
+curl -s http://<PROMETHEUS_IP>:9090/api/v1/targets | jq '.data.activeTargets[] | {job: .labels.job, health: .health}'
 ```
 
 ### Query Metrics
 
 ```bash
 # Connector status
-curl -s 'http://20.235.28.252:9090/api/v1/query?query=kafka_connect_connector_status{connector="sqlserver-debezium-connector"}' | jq
+curl -s 'http://<PROMETHEUS_IP>:9090/api/v1/query?query=kafka_connect_connector_status{connector="sqlserver-debezium-connector"}' | jq
 
 # CDC throughput
-curl -s 'http://20.235.28.252:9090/api/v1/query?query=rate(kafka_connect_source_connector_source_record_poll_total[1m])' | jq
+curl -s 'http://<PROMETHEUS_IP>:9090/api/v1/query?query=rate(kafka_connect_source_connector_source_record_poll_total[1m])' | jq
 ```
 
 ### Restart Components
@@ -165,7 +165,7 @@ kubectl rollout restart deployment/prometheus-operator -n monitoring
 
 ## 📈 Key Prometheus Queries
 
-Copy these into Prometheus UI (http://20.235.28.252:9090/graph):
+Copy these into Prometheus UI (http://<PROMETHEUS_IP>:9090/graph):
 
 ```promql
 # Connector Status
@@ -272,7 +272,7 @@ Update services to `ClusterIP` instead of `LoadBalancer` and use ingress control
 
 ## 🎯 Next Steps
 
-1. ✅ Access Grafana (http://20.235.34.175:3000)
+1. ✅ Access Grafana (http://<GRAFANA_IP>:3000)
 2. ✅ Change admin password
 3. ✅ Import Debezium dashboard
 4. ✅ Enable JMX metrics if needed
@@ -286,7 +286,7 @@ Update services to `ClusterIP` instead of `LoadBalancer` and use ingress control
 
 For issues or questions:
 1. Check `MONITORING-SETUP.md` for detailed troubleshooting
-2. Review Prometheus targets: http://20.235.28.252:9090/targets
+2. Review Prometheus targets: http://<PROMETHEUS_IP>:9090/targets
 3. Check component logs:
    ```bash
    kubectl logs -n monitoring deployment/grafana

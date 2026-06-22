@@ -17,7 +17,7 @@ SELECT TOP 10
 FROM sys.dm_exec_sessions s
 LEFT JOIN sys.dm_exec_requests r ON s.session_id = r.session_id
 OUTER APPLY sys.dm_exec_sql_text(r.sql_handle) t
-WHERE s.database_id = DB_ID('primdb')
+WHERE s.database_id = DB_ID('YourDatabase')
     AND s.is_user_process = 1
     AND (
         t.text LIKE '%cdc.%' OR
@@ -33,9 +33,9 @@ SELECT
     'CDC Sessions' AS metric,
     COUNT(*) AS count
 FROM sys.dm_exec_sessions s
-WHERE s.database_id = DB_ID('primdb')
+WHERE s.database_id = DB_ID('YourDatabase')
     AND s.is_user_process = 1
-    AND s.login_name = 'sqladmin';
+    AND s.login_name = 'your_username';
 GO
 
 -- Check 3: Last queries executed (includes completed queries)
@@ -48,8 +48,8 @@ SELECT TOP 5
 FROM sys.dm_exec_connections c
 JOIN sys.dm_exec_sessions s ON c.session_id = s.session_id
 CROSS APPLY sys.dm_exec_sql_text(c.most_recent_sql_handle) t
-WHERE s.database_id = DB_ID('primdb')
-    AND s.login_name = 'sqladmin'
+WHERE s.database_id = DB_ID('YourDatabase')
+    AND s.login_name = 'your_username'
 ORDER BY s.last_request_start_time DESC;
 GO
 

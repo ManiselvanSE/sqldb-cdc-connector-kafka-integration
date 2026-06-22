@@ -16,7 +16,7 @@ Your Debezium CDC monitoring stack is now set up with:
 ### Grafana (Primary Dashboard)
 
 ```
-URL: http://20.235.34.175:3000
+URL: http://<GRAFANA_IP>:3000
 Username: admin
 Password: admin
 ```
@@ -26,7 +26,7 @@ Password: admin
 ### Prometheus (Metrics & Alerts)
 
 ```
-URL: http://20.235.28.252:9090
+URL: http://<PROMETHEUS_IP>:9090
 ```
 
 No authentication required (configure in production!)
@@ -37,7 +37,7 @@ No authentication required (configure in production!)
 
 ### Grafana
 
-1. **Login:** http://20.235.34.175:3000
+1. **Login:** http://<GRAFANA_IP>:3000
 2. **Change Password:** Click profile → Change Password
 3. **Import Dashboard:**
    - Go to: Dashboards → Import
@@ -47,13 +47,13 @@ No authentication required (configure in production!)
 
 ### Prometheus
 
-1. **Targets:** http://20.235.28.252:9090/targets
+1. **Targets:** http://<PROMETHEUS_IP>:9090/targets
    - Should see: kafka-metrics, connect-metrics (when metrics enabled)
    
-2. **Alerts:** http://20.235.28.252:9090/alerts
+2. **Alerts:** http://<PROMETHEUS_IP>:9090/alerts
    - View: All configured CDC alert rules
 
-3. **Query:** http://20.235.28.252:9090/graph
+3. **Query:** http://<PROMETHEUS_IP>:9090/graph
    - Test query: `up`
    - Should show all monitoring targets
 
@@ -94,7 +94,7 @@ kubectl patch connect connect -n confluent --type='json' -p='[
 cd /Users/maniselvank/Mani/connector/sqldb/monitoring
 
 # Option A: Via UI (Recommended)
-# 1. Go to http://20.235.34.175:3000
+# 1. Go to http://<GRAFANA_IP>:3000
 # 2. Dashboards → Import
 # 3. Upload dashboard-debezium-overview.json
 
@@ -112,10 +112,10 @@ kubectl rollout restart deployment/grafana -n monitoring
 
 ```bash
 # Check Prometheus targets
-curl -s http://20.235.28.252:9090/api/v1/targets | jq '.data.activeTargets[] | {job: .labels.job, health: .health}'
+curl -s http://<PROMETHEUS_IP>:9090/api/v1/targets | jq '.data.activeTargets[] | {job: .labels.job, health: .health}'
 
 # Query connector status
-curl -s 'http://20.235.28.252:9090/api/v1/query?query=kafka_connect_connector_status' | jq
+curl -s 'http://<PROMETHEUS_IP>:9090/api/v1/query?query=kafka_connect_connector_status' | jq
 ```
 
 ### Step 4: Test Alerts
@@ -132,7 +132,7 @@ Alerts are configured for:
 8. **Under-replicated Partitions** - Replication issues
 9. **ISR Shrinks** - In-Sync Replica issues
 
-View at: http://20.235.28.252:9090/alerts
+View at: http://<PROMETHEUS_IP>:9090/alerts
 
 ---
 
@@ -140,7 +140,7 @@ View at: http://20.235.28.252:9090/alerts
 
 ### In Prometheus
 
-Query these in Prometheus UI (http://20.235.28.252:9090/graph):
+Query these in Prometheus UI (http://<PROMETHEUS_IP>:9090/graph):
 
 ```promql
 # Connector Status
@@ -271,9 +271,9 @@ kubectl apply -f grafana.yaml
 
 ## ✅ Verification Checklist
 
-- [ ] Can access Grafana at http://20.235.34.175:3000
+- [ ] Can access Grafana at http://<GRAFANA_IP>:3000
 - [ ] Changed default Grafana password
-- [ ] Can access Prometheus at http://20.235.28.252:9090
+- [ ] Can access Prometheus at http://<PROMETHEUS_IP>:9090
 - [ ] Prometheus targets showing (when metrics enabled)
 - [ ] Imported Debezium dashboard to Grafana
 - [ ] Dashboard showing live data
@@ -284,4 +284,4 @@ kubectl apply -f grafana.yaml
 
 **Monitoring stack is ready! 📊**
 
-Access Grafana now: http://20.235.34.175:3000 (admin/admin)
+Access Grafana now: http://<GRAFANA_IP>:3000 (admin/admin)

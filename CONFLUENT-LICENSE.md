@@ -4,7 +4,7 @@
 
 **Issue:** Confluent Platform trial period has expired  
 **Message:** "To continue using Confluent, purchase a license or register your existing enterprise license key"  
-**Control Center:** http://20.235.11.19:9021/settings/updates
+**Control Center:** http://<CONTROL_CENTER_IP>:9021/settings/updates
 
 ---
 
@@ -29,7 +29,7 @@ The Confluent Platform components are still running, but certain features may be
 If you have a Confluent Enterprise license:
 
 **Via Control Center UI:**
-1. Go to http://20.235.11.19:9021/settings/updates
+1. Go to http://<CONTROL_CENTER_IP>:9021/settings/updates
 2. Click "Add License Key"
 3. Paste your enterprise license key
 4. Click "Save"
@@ -134,7 +134,7 @@ kubectl exec kafka-0 -n confluent -- \
 kubectl exec kafka-0 -n confluent -- \
   kafka-console-consumer \
     --bootstrap-server localhost:9071 \
-    --topic azure-sqlserver.primdb.dbo.Customers \
+    --topic sqlserver.dbo.Customers \
     --from-beginning
 
 # ✅ CDC capture - WORKS
@@ -156,7 +156,7 @@ kubectl exec kafka-0 -n confluent -- \
 
 ```bash
 # Via Control Center
-curl -s http://20.235.11.19:9021/2.0/license | jq
+curl -s http://<CONTROL_CENTER_IP>:9021/2.0/license | jq
 
 # Via Kafka broker
 kubectl exec kafka-0 -n confluent -- \
@@ -185,7 +185,7 @@ kubectl exec kafka-0 -n confluent -- \
 kubectl exec kafka-0 -n confluent -- \
   kafka-console-consumer \
     --bootstrap-server localhost:9071 \
-    --topic azure-sqlserver.primdb.dbo.Customers \
+    --topic sqlserver.dbo.Customers \
     --from-beginning \
     --max-messages 5
 ```

@@ -1,7 +1,7 @@
 -- ============================================
 -- End-to-End Flow Test
--- Run this on: primaryserver.database.windows.net (PRIMARY!)
--- Database: primdb
+-- Run this on: yourprimaryserver.database.windows.net (PRIMARY!)
+-- Database: YourDatabase
 -- ============================================
 
 -- Insert a unique test record on PRIMARY
