@@ -122,7 +122,7 @@ kubectl get connector -n confluent
 ├── scripts/
 │   └── quick-commands.sh              # Helper utility script
 │
-├── PRODUCTION-SETUP-SLIDES.md         # 45-slide presentation
+├── setup-document.md         # 45-slide presentation
 ├── PRODUCTION-SETUP-QUICK-REFERENCE.md # Operations cheat sheet
 ├── PRODUCTION-ARCHITECTURE-OVERVIEW.md # Architecture guide
 ├── PRESENTATION-README.md             # Presentation materials guide
@@ -252,7 +252,7 @@ kubectl exec kafka-0 -n confluent -- kafka-console-consumer \\
 - **[Monitoring Guide](monitoring/MONITORING-SETUP.md)** - Complete monitoring setup
 
 ### Production Guides
-- **[Production Setup Slides](PRODUCTION-SETUP-SLIDES.md)** - 45-slide presentation
+- **[Production Setup Slides](setup-document.md)** - 45-slide presentation
 - **[Architecture Overview](PRODUCTION-ARCHITECTURE-OVERVIEW.md)** - System design
 - **[Presentation Guide](PRESENTATION-README.md)** - How to use materials
 

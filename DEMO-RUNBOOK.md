@@ -533,7 +533,7 @@ WHERE email LIKE '%@example.com';
 
 ## 🔗 Additional Resources
 
-- **Full Setup Guide:** See PRODUCTION-SETUP-SLIDES.md
+- **Full Setup Guide:** See setup-document.md
 - **Operations Guide:** See PRODUCTION-SETUP-QUICK-REFERENCE.md
 - **Architecture Details:** See PRODUCTION-ARCHITECTURE-OVERVIEW.md
 - **CLI Commands:** See CLI-COMMANDS.md

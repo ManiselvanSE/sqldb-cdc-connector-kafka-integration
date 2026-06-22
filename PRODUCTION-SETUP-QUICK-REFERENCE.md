@@ -366,7 +366,7 @@ EXEC sys.sp_cdc_help_jobs;
 ## 📞 Support Resources
 
 ### Documentation Locations
-- Production slides: `PRODUCTION-SETUP-SLIDES.md`
+- Production slides: `setup-document.md`
 - Monitoring guide: `monitoring/MONITORING-SETUP.md`
 - Quick start: `monitoring/QUICK-START.md`
 - CLI commands: `CLI-COMMANDS.md`

@@ -308,7 +308,7 @@ Week 4: Production Hardening
 
 **Project Documentation:**
 - Architecture: `PRODUCTION-ARCHITECTURE-OVERVIEW.md`
-- Setup Guide: `PRODUCTION-SETUP-SLIDES.md`
+- Setup Guide: `setup-document.md`
 - Quick Reference: `PRODUCTION-SETUP-QUICK-REFERENCE.md`
 - Monitoring: `monitoring/MONITORING-SETUP.md`
 
