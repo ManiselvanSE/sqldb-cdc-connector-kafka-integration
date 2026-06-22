@@ -1,0 +1,30 @@
+apiVersion: platform.confluent.io/v1beta1
+kind: Connect
+metadata:
+  name: connect
+  namespace: confluent
+spec:
+  replicas: 1
+  image:
+    application: confluentinc/cp-server-connect:7.8.0
+    init: confluentinc/confluent-init-container:2.10.0
+  build:
+    type: onDemand
+    onDemand:
+      plugins:
+        locationType: confluentHub
+        confluentHub:
+          - name: debezium-connector-sqlserver
+            owner: debezium
+            version: "2.5.4"
+  dependencies:
+    kafka:
+      bootstrapEndpoint: kafka:9071
+  podTemplate:
+    resources:
+      requests:
+        cpu: 1000m
+        memory: 2Gi
+      limits:
+        cpu: 2000m
+        memory: 4Gi

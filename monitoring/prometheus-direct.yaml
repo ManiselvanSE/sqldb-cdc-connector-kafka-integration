@@ -1,0 +1,105 @@
+---
+# Direct Prometheus Deployment (without operator)
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: prometheus-config
+  namespace: monitoring
+data:
+  prometheus.yml: |
+    global:
+      scrape_interval: 30s
+      evaluation_interval: 30s
+
+    scrape_configs:
+    # Kafka Connect Metrics
+    - job_name: 'kafka-connect'
+      static_configs:
+      - targets: ['connect-0.connect.confluent.svc.cluster.local:7778']
+        labels:
+          cluster: 'confluent'
+          component: 'connect'
+
+    # Kafka Broker Metrics (if enabled)
+    - job_name: 'kafka-brokers'
+      static_configs:
+      - targets:
+        - 'kafka-0.kafka.confluent.svc.cluster.local:7778'
+        - 'kafka-1.kafka.confluent.svc.cluster.local:7778'
+        - 'kafka-2.kafka.confluent.svc.cluster.local:7778'
+        labels:
+          cluster: 'confluent'
+          component: 'kafka'
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  serviceName: prometheus
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus
+  template:
+    metadata:
+      labels:
+        app: prometheus
+    spec:
+      serviceAccountName: prometheus
+      securityContext:
+        fsGroup: 65534
+        runAsUser: 65534
+        runAsNonRoot: true
+      containers:
+      - name: prometheus
+        image: prom/prometheus:v2.47.0
+        args:
+        - '--config.file=/etc/prometheus/prometheus.yml'
+        - '--storage.tsdb.path=/prometheus'
+        - '--storage.tsdb.retention.time=7d'
+        - '--web.enable-lifecycle'
+        ports:
+        - containerPort: 9090
+          name: http
+        volumeMounts:
+        - name: prometheus-config
+          mountPath: /etc/prometheus
+        - name: prometheus-storage
+          mountPath: /prometheus
+        resources:
+          requests:
+            cpu: 500m
+            memory: 2Gi
+          limits:
+            cpu: 1000m
+            memory: 4Gi
+      volumes:
+      - name: prometheus-config
+        configMap:
+          name: prometheus-config
+  volumeClaimTemplates:
+  - metadata:
+      name: prometheus-storage
+    spec:
+      storageClassName: default
+      accessModes:
+      - ReadWriteOnce
+      resources:
+        requests:
+          storage: 20Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  type: LoadBalancer
+  selector:
+    app: prometheus
+  ports:
+  - name: http
+    port: 9090
+    targetPort: 9090

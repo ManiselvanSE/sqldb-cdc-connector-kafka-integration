@@ -1,0 +1,121 @@
+---
+# Prometheus Alert Rules for CDC Monitoring
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: confluent-cdc-alerts
+  namespace: monitoring
+  labels:
+    monitoring: confluent
+spec:
+  groups:
+  - name: debezium_connector
+    interval: 30s
+    rules:
+
+    # Connector Down Alert
+    - alert: DebeziumConnectorDown
+      expr: kafka_connect_connector_status{connector="sqlserver-debezium-connector",status!="running"} == 1
+      for: 2m
+      labels:
+        severity: critical
+        component: debezium
+      annotations:
+        summary: "Debezium SQL Server Connector is DOWN"
+        description: "Connector {{ $labels.connector }} is not running. Current status: {{ $labels.status }}"
+
+    # Connector Task Failed
+    - alert: DebeziumTaskFailed
+      expr: kafka_connect_connector_task_status{connector="sqlserver-debezium-connector",status="failed"} == 1
+      for: 1m
+      labels:
+        severity: critical
+        component: debezium
+      annotations:
+        summary: "Debezium Connector Task Failed"
+        description: "Task {{ $labels.task }} of connector {{ $labels.connector }} has failed"
+
+    # High Lag Alert
+    - alert: DebeziumHighLag
+      expr: |
+        (kafka_connect_source_connector_source_record_poll_total -
+         kafka_connect_source_connector_source_record_write_total) > 10000
+      for: 5m
+      labels:
+        severity: warning
+        component: debezium
+      annotations:
+        summary: "High CDC lag detected"
+        description: "Connector {{ $labels.connector }} has {{ $value }} unprocessed records"
+
+    # No Records Processed
+    - alert: DebeziumNoRecordsProcessed
+      expr: |
+        rate(kafka_connect_source_connector_source_record_poll_total{connector="sqlserver-debezium-connector"}[5m]) == 0
+      for: 10m
+      labels:
+        severity: warning
+        component: debezium
+      annotations:
+        summary: "No CDC records processed"
+        description: "Connector {{ $labels.connector }} has not processed any records in the last 10 minutes"
+
+    # Connect Worker Down
+    - alert: KafkaConnectWorkerDown
+      expr: up{job="connect-metrics"} == 0
+      for: 2m
+      labels:
+        severity: critical
+        component: connect
+      annotations:
+        summary: "Kafka Connect worker is down"
+        description: "Connect worker {{ $labels.instance }} is not responding"
+
+    # High Error Rate
+    - alert: DebeziumHighErrorRate
+      expr: |
+        rate(kafka_connect_connector_failed_task_restarts_total{connector="sqlserver-debezium-connector"}[5m]) > 0.1
+      for: 5m
+      labels:
+        severity: warning
+        component: debezium
+      annotations:
+        summary: "High error rate in Debezium connector"
+        description: "Connector {{ $labels.connector }} is experiencing {{ $value }} task restarts per second"
+
+  - name: kafka_broker
+    interval: 30s
+    rules:
+
+    # Kafka Broker Down
+    - alert: KafkaBrokerDown
+      expr: up{job="kafka-metrics"} == 0
+      for: 2m
+      labels:
+        severity: critical
+        component: kafka
+      annotations:
+        summary: "Kafka broker is down"
+        description: "Kafka broker {{ $labels.instance }} is not responding"
+
+    # Under-replicated Partitions
+    - alert: KafkaUnderReplicatedPartitions
+      expr: kafka_server_replicamanager_underreplicatedpartitions > 0
+      for: 5m
+      labels:
+        severity: warning
+        component: kafka
+      annotations:
+        summary: "Kafka has under-replicated partitions"
+        description: "Broker {{ $labels.instance }} has {{ $value }} under-replicated partitions"
+
+    # ISR Shrinks
+    - alert: KafkaISRShrink
+      expr: rate(kafka_server_replicamanager_isrshrinks_total[5m]) > 0
+      for: 5m
+      labels:
+        severity: warning
+        component: kafka
+      annotations:
+        summary: "Kafka ISR is shrinking"
+        description: "Broker {{ $labels.instance }} ISR is shrinking at {{ $value }} per second"

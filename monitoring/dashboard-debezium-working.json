@@ -1,0 +1,231 @@
+{
+  "title": "Debezium SQL Server CDC Overview",
+  "uid": "debezium-overview",
+  "tags": ["debezium", "cdc", "sqlserver"],
+  "timezone": "browser",
+  "panels": [
+    {
+      "id": 1,
+      "title": "Active Connectors",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 6, "x": 0, "y": 0},
+      "targets": [
+        {
+          "expr": "kafka_connect_connect_worker_metrics_connector_count",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value"
+      }
+    },
+    {
+      "id": 2,
+      "title": "Total Tasks",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 6, "x": 6, "y": 0},
+      "targets": [
+        {
+          "expr": "kafka_connect_connect_worker_metrics_connector_total_task_count{connector=\"sqlserver-debezium-connector\"}",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value"
+      }
+    },
+    {
+      "id": 3,
+      "title": "Database Connected",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 6, "x": 12, "y": 0},
+      "targets": [
+        {
+          "expr": "debezium_sql_server_connector_metrics_connected",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "textMode": "value"
+      },
+      "fieldConfig": {
+        "defaults": {
+          "mappings": [
+            {"type": "value", "options": {"1": {"text": "CONNECTED", "color": "green"}}},
+            {"type": "value", "options": {"0": {"text": "DISCONNECTED", "color": "red"}}}
+          ]
+        }
+      }
+    },
+    {
+      "id": 4,
+      "title": "Committed Transactions",
+      "type": "stat",
+      "gridPos": {"h": 4, "w": 6, "x": 18, "y": 0},
+      "targets": [
+        {
+          "expr": "debezium_sql_server_connector_metrics_numberofcommittedtransactions",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "colorMode": "value",
+        "graphMode": "area",
+        "textMode": "value"
+      }
+    },
+    {
+      "id": 5,
+      "title": "CDC Records Polled (Total)",
+      "type": "graph",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 4},
+      "targets": [
+        {
+          "expr": "kafka_connect_source_task_metrics_source_record_poll_total{connector=\"sqlserver-debezium-connector\"}",
+          "legendFormat": "Records Polled",
+          "refId": "A"
+        }
+      ],
+      "yaxes": [
+        {"format": "short", "label": "Records"},
+        {"format": "short"}
+      ]
+    },
+    {
+      "id": 6,
+      "title": "CDC Records Written (Total)",
+      "type": "graph",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 4},
+      "targets": [
+        {
+          "expr": "kafka_connect_source_task_metrics_source_record_write_total{connector=\"sqlserver-debezium-connector\"}",
+          "legendFormat": "Records Written",
+          "refId": "A"
+        }
+      ],
+      "yaxes": [
+        {"format": "short", "label": "Records"},
+        {"format": "short"}
+      ]
+    },
+    {
+      "id": 7,
+      "title": "CDC Throughput (Records/sec)",
+      "type": "graph",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 12},
+      "targets": [
+        {
+          "expr": "rate(kafka_connect_source_task_metrics_source_record_poll_total{connector=\"sqlserver-debezium-connector\"}[1m])",
+          "legendFormat": "Poll Rate",
+          "refId": "A"
+        },
+        {
+          "expr": "rate(kafka_connect_source_task_metrics_source_record_write_total{connector=\"sqlserver-debezium-connector\"}[1m])",
+          "legendFormat": "Write Rate",
+          "refId": "B"
+        }
+      ],
+      "yaxes": [
+        {"format": "short", "label": "Records/sec"},
+        {"format": "short"}
+      ]
+    },
+    {
+      "id": 8,
+      "title": "Snapshot Progress",
+      "type": "gauge",
+      "gridPos": {"h": 8, "w": 6, "x": 12, "y": 12},
+      "targets": [
+        {
+          "expr": "(debezium_sql_server_connector_metrics_snapshotcompleted / debezium_sql_server_connector_metrics_remainingtablecount) * 100",
+          "refId": "A"
+        }
+      ],
+      "options": {
+        "showThresholdLabels": false,
+        "showThresholdMarkers": true
+      },
+      "fieldConfig": {
+        "defaults": {
+          "unit": "percent",
+          "min": 0,
+          "max": 100
+        }
+      }
+    },
+    {
+      "id": 9,
+      "title": "Error Metrics",
+      "type": "graph",
+      "gridPos": {"h": 8, "w": 6, "x": 18, "y": 12},
+      "targets": [
+        {
+          "expr": "kafka_connect_task_error_metrics_total_errors_logged{connector=\"sqlserver-debezium-connector\"}",
+          "legendFormat": "Errors Logged",
+          "refId": "A"
+        },
+        {
+          "expr": "kafka_connect_task_error_metrics_total_record_failures{connector=\"sqlserver-debezium-connector\"}",
+          "legendFormat": "Record Failures",
+          "refId": "B"
+        }
+      ],
+      "yaxes": [
+        {"format": "short", "label": "Count"},
+        {"format": "short"}
+      ]
+    },
+    {
+      "id": 10,
+      "title": "Milliseconds Behind Source",
+      "type": "graph",
+      "gridPos": {"h": 8, "w": 12, "x": 0, "y": 20},
+      "targets": [
+        {
+          "expr": "debezium_sql_server_connector_metrics_millisecondsbehindsource",
+          "legendFormat": "Lag (ms)",
+          "refId": "A"
+        }
+      ],
+      "yaxes": [
+        {"format": "ms", "label": "Latency"},
+        {"format": "short"}
+      ]
+    },
+    {
+      "id": 11,
+      "title": "Queue Size",
+      "type": "graph",
+      "gridPos": {"h": 8, "w": 12, "x": 12, "y": 20},
+      "targets": [
+        {
+          "expr": "debezium_sql_server_connector_metrics_currentqueuesizeinbytes",
+          "legendFormat": "Current Queue Size",
+          "refId": "A"
+        },
+        {
+          "expr": "debezium_sql_server_connector_metrics_maxqueuesizeinbytes",
+          "legendFormat": "Max Queue Size",
+          "refId": "B"
+        }
+      ],
+      "yaxes": [
+        {"format": "bytes", "label": "Size"},
+        {"format": "short"}
+      ]
+    }
+  ],
+  "schemaVersion": 36,
+  "version": 1,
+  "refresh": "10s",
+  "time": {
+    "from": "now-15m",
+    "to": "now"
+  }
+}

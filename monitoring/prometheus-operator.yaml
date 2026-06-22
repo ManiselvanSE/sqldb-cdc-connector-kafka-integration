@@ -1,0 +1,80 @@
+---
+# Prometheus Operator Deployment
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prometheus-operator
+  namespace: monitoring
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prometheus-operator
+  template:
+    metadata:
+      labels:
+        app: prometheus-operator
+    spec:
+      serviceAccountName: prometheus-operator
+      containers:
+      - name: prometheus-operator
+        image: quay.io/prometheus-operator/prometheus-operator:v0.68.0
+        args:
+        - --kubelet-service=kube-system/kubelet
+        - --prometheus-config-reloader=quay.io/prometheus-operator/prometheus-config-reloader:v0.68.0
+        resources:
+          requests:
+            cpu: 100m
+            memory: 128Mi
+          limits:
+            cpu: 200m
+            memory: 256Mi
+---
+# ServiceAccount for Prometheus Operator
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus-operator
+  namespace: monitoring
+---
+# ClusterRole for Prometheus Operator
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prometheus-operator
+rules:
+- apiGroups: [""]
+  resources:
+  - nodes
+  - services
+  - endpoints
+  - pods
+  - configmaps
+  - secrets
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["apps"]
+  resources:
+  - statefulsets
+  verbs: ["get", "list", "watch"]
+- apiGroups: ["monitoring.coreos.com"]
+  resources:
+  - prometheuses
+  - prometheusrules
+  - servicemonitors
+  - podmonitors
+  - alertmanagers
+  verbs: ["*"]
+---
+# ClusterRoleBinding for Prometheus Operator
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus-operator
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus-operator
+subjects:
+- kind: ServiceAccount
+  name: prometheus-operator
+  namespace: monitoring

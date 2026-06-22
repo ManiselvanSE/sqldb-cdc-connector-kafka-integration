@@ -1,0 +1,49 @@
+apiVersion: platform.confluent.io/v1beta1
+kind: Connector
+metadata:
+  name: sqlserver-debezium-connector
+  namespace: confluent
+spec:
+  class: "io.debezium.connector.sqlserver.SqlServerConnector"
+  taskMax: 1
+  connectClusterRef:
+    name: connect
+  configs:
+    # Topic prefix for all Kafka topics
+    topic.prefix: "azure-sqlserver"
+
+    # Azure SQL Server Read Replica Connection Details
+    database.hostname: "secondaryserver.database.windows.net"
+    database.port: "1433"
+    database.user: "sqladmin"
+    database.password: "Confluent1234"
+    database.names: "primdb"
+
+    # Read Replica Configuration (CRITICAL)
+    # This forces the connection to the read-only replica
+    database.applicationIntent: "ReadOnly"
+
+    # SSL/TLS Configuration for Azure SQL
+    database.encrypt: "true"
+    database.trustServerCertificate: "false"
+
+    # Snapshot Configuration
+    snapshot.isolation.mode: "snapshot"
+    snapshot.mode: "initial"
+
+    # Schema History Storage in Kafka
+    schema.history.internal.kafka.bootstrap.servers: "kafka:9071"
+    schema.history.internal.kafka.topic: "schema-changes.azure-sqlserver"
+
+    # Performance Tuning
+    max.batch.size: "2048"
+    max.queue.size: "8192"
+    poll.interval.ms: "1000"
+
+    # Capture all tables with CDC enabled
+    # To capture specific tables, add: table.include.list: "dbo.Customers,dbo.Orders,dbo.Products"
+
+    # Optional: Extract only the new record state (removes CDC metadata)
+    # transforms: "unwrap"
+    # transforms.unwrap.type: "io.debezium.transforms.ExtractNewRecordState"
+    # transforms.unwrap.drop.tombstones: "false"

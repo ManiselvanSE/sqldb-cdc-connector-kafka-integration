@@ -1,0 +1,70 @@
+---
+# ServiceMonitor for Kafka Brokers
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: kafka-metrics
+  namespace: confluent
+  labels:
+    monitoring: confluent
+spec:
+  selector:
+    matchLabels:
+      app: kafka
+  endpoints:
+  - port: prometheus
+    interval: 30s
+    path: /metrics
+---
+# ServiceMonitor for Kafka Connect
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: connect-metrics
+  namespace: confluent
+  labels:
+    monitoring: confluent
+spec:
+  selector:
+    matchLabels:
+      app: connect
+  endpoints:
+  - port: prometheus
+    interval: 30s
+    path: /metrics
+---
+# Service for Kafka Metrics (if not exists)
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-metrics
+  namespace: confluent
+  labels:
+    app: kafka
+spec:
+  clusterIP: None
+  selector:
+    app: kafka
+  ports:
+  - name: prometheus
+    port: 7778
+    targetPort: 7778
+    protocol: TCP
+---
+# Service for Connect Metrics (if not exists)
+apiVersion: v1
+kind: Service
+metadata:
+  name: connect-metrics
+  namespace: confluent
+  labels:
+    app: connect
+spec:
+  clusterIP: None
+  selector:
+    app.kubernetes.io/name: connect
+  ports:
+  - name: prometheus
+    port: 7778
+    targetPort: 7778
+    protocol: TCP

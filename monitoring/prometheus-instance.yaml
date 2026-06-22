@@ -1,0 +1,92 @@
+---
+# Prometheus Instance for Confluent Monitoring
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: prometheus
+  namespace: monitoring
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: prometheus
+rules:
+- apiGroups: [""]
+  resources:
+  - nodes
+  - nodes/metrics
+  - services
+  - endpoints
+  - pods
+  verbs: ["get", "list", "watch"]
+- apiGroups: [""]
+  resources:
+  - configmaps
+  verbs: ["get"]
+- nonResourceURLs: ["/metrics"]
+  verbs: ["get"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: prometheus
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: prometheus
+subjects:
+- kind: ServiceAccount
+  name: prometheus
+  namespace: monitoring
+---
+# Prometheus Custom Resource
+apiVersion: monitoring.coreos.com/v1
+kind: Prometheus
+metadata:
+  name: confluent-monitoring
+  namespace: monitoring
+spec:
+  serviceAccountName: prometheus
+  replicas: 1
+  retention: 7d
+  resources:
+    requests:
+      memory: 2Gi
+      cpu: 500m
+    limits:
+      memory: 4Gi
+      cpu: 1000m
+  storage:
+    volumeClaimTemplate:
+      spec:
+        accessModes:
+        - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
+  serviceMonitorSelector:
+    matchLabels:
+      monitoring: confluent
+  ruleSelector:
+    matchLabels:
+      monitoring: confluent
+  alerting:
+    alertmanagers:
+    - name: alertmanager
+      namespace: monitoring
+      port: web
+---
+# Prometheus Service
+apiVersion: v1
+kind: Service
+metadata:
+  name: prometheus
+  namespace: monitoring
+spec:
+  type: LoadBalancer
+  selector:
+    prometheus: confluent-monitoring
+  ports:
+  - name: web
+    port: 9090
+    targetPort: 9090

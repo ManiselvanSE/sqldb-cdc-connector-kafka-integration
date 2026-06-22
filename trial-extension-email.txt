@@ -1,0 +1,44 @@
+To: contact@confluent.io
+Subject: Trial Extension Request - Azure SQL CDC Production POC
+
+Hello Confluent Team,
+
+We are currently evaluating Confluent Platform for a production Azure SQL Server CDC deployment using Debezium. Our trial has expired and we would like to request a 60-day extension to complete our POC and business case evaluation.
+
+Current Setup:
+- Confluent Platform: 7.8.0
+- Debezium SQL Server Connector: 2.5.4
+- Use Case: Real-time CDC from Azure SQL geo-replicated database
+- Deployment: Kubernetes (Confluent for Kubernetes operator)
+- CDC Tables: 3 tables (Customers, Orders, Products)
+- Configuration: Reading from read replica with zero production impact
+
+POC Progress:
+✅ Successfully deployed and tested
+✅ CDC capture from Azure SQL read replica working perfectly
+✅ Zero impact on production database (ApplicationIntent=ReadOnly)
+✅ All 5 Kafka topics created and streaming
+✅ Initial snapshot completed
+✅ Real-time change capture validated
+✅ Demo materials prepared for stakeholders
+
+We are preparing customer demonstrations and business case analysis for production deployment. A 60-day extension would allow us to:
+- Complete customer demonstrations
+- Perform load testing
+- Finalize architecture design
+- Prepare production deployment plan
+- Evaluate licensing options
+
+Expected Timeline:
+- Weeks 1-2: Customer demonstrations
+- Weeks 3-4: Load testing and performance validation
+- Weeks 5-6: Architecture finalization
+- Weeks 7-8: Business case and licensing decision
+
+We appreciate your consideration and look forward to potentially becoming a Confluent Enterprise customer.
+
+Thank you,
+[Your Name]
+[Your Title]
+[Company Name]
+[Contact Information]
