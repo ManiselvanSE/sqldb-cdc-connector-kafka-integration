@@ -254,7 +254,8 @@ kubectl exec kafka-0 -n confluent -- kafka-console-consumer \\
 ### Production Guides
 - **[Production Setup Slides](setup-document.md)** - 45-slide presentation
 - **[Architecture Overview](PRODUCTION-ARCHITECTURE-OVERVIEW.md)** - System design
-- **[Presentation Guide](PRESENTATION-README.md)** - How to use materials
+- **[Failover & High Availability](FAILOVER-AND-HIGH-AVAILABILITY.md)** - AG setup and failover handling
+- **[Demo Runbook](DEMO-RUNBOOK.md)** - Live demonstration guide
 
 ### Troubleshooting
 
